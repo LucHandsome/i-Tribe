@@ -34,111 +34,97 @@ const Info: React.FC<InfoProps> = ({
   );
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-4">{name}</h1>
-
-      {/* Màu sắc */}
-      <div className="mb-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-3">Màu sắc</h3>
-        <div className="flex flex-wrap gap-3">
-          {uniqueColors.map((color) => {
-            const variant = variants.find(
-              (v) => v.color.colorName === color
-            );
-            if (!variant) return null;
-            return (
-              <Button
-                key={color}
-                variant={
-                  selectedVariant?.color.colorName === color
-                    ? "default"
-                    : "outline"
-                }
-                className="flex items-center gap-2"
-                onClick={() => onVariantSelect(variant)}
-              >
-                <div
-                  className="w-4 h-4 rounded-full border border-gray-200"
-                  style={{ backgroundColor: variant.color.hexCode }}
-                />
-                <span>{color}</span>
-              </Button>
-            );
-          })}
-        </div>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">{name}</h1>
+        {selectedVariant && (
+          <p className="mt-2 text-2xl text-primary">
+            {formatPrice(selectedVariant.price)}
+          </p>
+        )}
       </div>
 
-      {/* Dung lượng */}
-      {uniqueStorages.length > 0 && (
-        <div className="mb-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-3">
-            Dung lượng
-          </h3>
-          <div className="flex flex-wrap gap-3">
-            {uniqueStorages.map((storage) => {
-              const variant = variants.find((v) => v.storage === storage);
+      <div className="space-y-4">
+        <div>
+          <h3 className="font-medium mb-2">Màu sắc</h3>
+          <div className="flex flex-wrap gap-2">
+            {Array.from(new Set(variants.map(v => v.color.colorName))).map((colorName) => {
+              const variant = variants.find(v => v.color.colorName === colorName);
               if (!variant) return null;
               return (
-                <Button
-                  key={storage}
-                  variant={
-                    selectedVariant?.storage === storage
-                      ? "default"
-                      : "outline"
-                  }
+                <button
+                  key={variant.color.colorName}
                   onClick={() => onVariantSelect(variant)}
+                  className={`px-4 py-2 rounded-md border ${
+                    selectedVariant?.color.colorName === colorName
+                      ? "border-primary bg-primary/10"
+                      : "border-gray-200 hover:border-primary"
+                  }`}
                 >
-                  {storage}
-                </Button>
+                  {variant.color.colorName}
+                </button>
               );
             })}
           </div>
         </div>
-      )}
 
-      {/* Giá và trạng thái */}
-      <div className="mb-6">
-        <div className="flex items-center gap-4 mb-3">
-          <span className="text-2xl font-bold text-gray-900">
-            {selectedVariant
-              ? formatPrice(selectedVariant.price)
-              : formatPrice(variants[0].price)}
-          </span>
-          {selectedVariant?.stock_quantity === 0 ? (
-            <Badge variant="destructive">Hết hàng</Badge>
-          ) : (
-            <Badge variant="secondary" className="bg-green-100 text-green-800">
-              Còn hàng
-            </Badge>
-          )}
+        <div>
+          <h3 className="font-medium mb-2">Dung lượng</h3>
+          <div className="flex flex-wrap gap-2">
+            {Array.from(new Set(variants.map(v => v.storage))).map((storage) => {
+              const variant = variants.find(v => v.storage === storage);
+              if (!variant) return null;
+              return (
+                <button
+                  key={storage}
+                  onClick={() => onVariantSelect(variant)}
+                  className={`px-4 py-2 rounded-md border ${
+                    selectedVariant?.storage === storage
+                      ? "border-primary bg-primary/10"
+                      : "border-gray-200 hover:border-primary"
+                  }`}
+                >
+                  {storage}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      {/* Nút thêm vào giỏ hàng và yêu thích */}
       <div className="flex gap-4">
         <Button
-          size="lg"
-          className="flex-1"
           onClick={onAddToCart}
-          disabled={!selectedVariant || selectedVariant.stock_quantity === 0}
+          className="flex-1"
+          disabled={!selectedVariant}
         >
-          <ShoppingCart className="w-5 h-5 mr-2" />
           Thêm vào giỏ hàng
         </Button>
         <Button
-          size="lg"
           variant="outline"
-          className={`${
-            isWishlisted ? "bg-pink-50 text-pink-600" : ""
-          } border-2`}
+          size="icon"
           onClick={onAddToWishlist}
           disabled={!selectedVariant}
+          className={isWishlisted ? "text-red-500" : ""}
         >
-          <Heart
-            className={`w-5 h-5 ${isWishlisted ? "fill-current" : ""}`}
-          />
+          <Heart className="h-5 w-5" fill={isWishlisted ? "currentColor" : "none"} />
         </Button>
       </div>
+
+      {selectedVariant && (
+        <div className="space-y-4">
+          <div>
+            <h3 className="font-medium">Tình trạng</h3>
+            <p className={selectedVariant.stock_quantity > 0 ? "text-green-500" : "text-red-500"}>
+              {selectedVariant.stock_quantity > 0 ? "Còn hàng" : "Hết hàng"}
+            </p>
+          </div>
+          <div>
+            <h3 className="font-medium">Mô tả</h3>
+            <p className="text-gray-600">{selectedVariant.description}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
