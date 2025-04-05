@@ -5,7 +5,7 @@ import Image from "next/image";
 import {
   getOrders,
   cancelOrder as cancelOrderAPI,
-} from "@/api/services/orders/orderApi";
+} from "@/services/orders/orderApi";
 import type { Order, ErrorType } from "@/app/orders/type";
 import { toast } from "@/hooks/use-toast";
 import withAuth from "@/components/common/withAuth";
