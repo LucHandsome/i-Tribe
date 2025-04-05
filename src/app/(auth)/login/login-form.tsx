@@ -88,11 +88,7 @@ export default function LoginForm() {
     }
   }, [dispatch, searchParams, toast]);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginBodyType>({
+  const form = useForm<LoginBodyType>({
     resolver: zodResolver(LoginBody),
     defaultValues: {
       email: "",
@@ -106,10 +102,10 @@ export default function LoginForm() {
 
   return (
     <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-      <Form {...{ register, handleSubmit, errors }}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
-            control={register("email")}
+            control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
@@ -133,7 +129,7 @@ export default function LoginForm() {
           />
 
           <FormField
-            control={register("password")}
+            control={form.control}
             name="password"
             render={({ field }) => (
               <FormItem>
