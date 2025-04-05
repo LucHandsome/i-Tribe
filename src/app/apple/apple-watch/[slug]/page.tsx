@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { useGetProductBySlug } from "@/hooks/useProducts";
 import { useDispatch } from "react-redux";
-import { addToCart } from "@/redux/features/cartSlice";
-import { addToWishlist } from "@/redux/features/wishlistSlice";
+import { addToCart } from "@/lib/features/cart/cartSlice";
+import { addToWishlist } from "@/lib/features/wishlists/wistlistSlice";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Heart, ShoppingCart } from "lucide-react";
