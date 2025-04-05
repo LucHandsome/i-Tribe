@@ -15,6 +15,12 @@ import {
   Message,
 } from "@/services/chatbot/chatbotApi";
 
+interface Message {
+  content: string;
+  role: string;
+  timestamp: Date;
+}
+
 const UserPage = () => {
   const [newMessage, setNewMessage] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -43,10 +49,10 @@ const UserPage = () => {
       if (response.status === "success") {
         setMessages(response.data.messages);
       }
-    } catch (error) {
+    } catch {
       toast({
-        title: "Lỗi",
-        description: "Không thể tải tin nhắn. Vui lòng thử lại!",
+        title: "Đã xảy ra lỗi",
+        description: "Không thể tải tin nhắn",
         variant: "destructive",
       });
       setMessages([]);

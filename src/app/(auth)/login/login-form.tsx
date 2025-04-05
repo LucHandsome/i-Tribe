@@ -36,7 +36,6 @@ export default function LoginForm() {
   const { message } = loginState;
 
   const [showPassword, setShowPassword] = useState(false);
-  const [isProcessingAuth, setIsProcessingAuth] = useState(false);
 
   const searchParams = useSearchParams();
 
@@ -70,7 +69,6 @@ export default function LoginForm() {
     const email = searchParams.get("email");
 
     if (accessToken && name && email) {
-      setIsProcessingAuth(true);
       try {
         dispatch(updateGoogleAuth({ accessToken, name, email }));
         toast({
@@ -85,13 +83,16 @@ export default function LoginForm() {
           variant: "destructive",
         });
       } finally {
-        setIsProcessingAuth(false);
         window.history.replaceState({}, "", "/");
       }
     }
   }, [dispatch, searchParams, toast]);
 
-  const form = useForm<LoginBodyType>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginBodyType>({
     resolver: zodResolver(LoginBody),
     defaultValues: {
       email: "",
@@ -105,10 +106,10 @@ export default function LoginForm() {
 
   return (
     <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <Form {...{ register, handleSubmit, errors }}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <FormField
-            control={form.control}
+            control={register("email")}
             name="email"
             render={({ field }) => (
               <FormItem>
@@ -118,7 +119,6 @@ export default function LoginForm() {
                     placeholder="example@gmail.com"
                     type="email"
                     {...field}
-                    {...form.register("email")}
                     disabled={isLoading}
                     className={`text-gray-600 transition duration-200 ease-in-out ${
                       isLoading
@@ -133,7 +133,7 @@ export default function LoginForm() {
           />
 
           <FormField
-            control={form.control}
+            control={register("password")}
             name="password"
             render={({ field }) => (
               <FormItem>
@@ -144,7 +144,6 @@ export default function LoginForm() {
                       placeholder="8+ characters"
                       type={showPassword ? "text" : "password"}
                       {...field}
-                      {...form.register("password")}
                       disabled={isLoading}
                       className={`text-gray-600 transition duration-200 ease-in-out ${
                         isLoading
